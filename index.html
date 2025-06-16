@@ -1,0 +1,422 @@
+<!--
+explicaçoes sobre coisas que tive duvidas:
+
+
+📌 O que é reportValidity()?
+
+O reportValidity() é um método do DOM (Document Object Model) usado com elementos de 
+formulário, como <form> ou <input>. Ele verifica se os campos do formulário estão válidos e,
+se não estiverem, mostra as mensagens de erro automaticamente (como aquelas mensagens 
+vermelhas que o navegador mostra).
+
+✅ Onde você usa?
+Você pode usar em:
+Formulários (<form>)
+Campos de formulário (como <input>, <textarea>, <select>)
+
+
+⚙️ O que ele faz?
+Quando você chama reportValidity():
+1. O navegador verifica se todos os campos obrigatórios e com 
+validações (como required, type="email", maxlength, etc.) estão corretos.
+
+2. Se tudo estiver válido, ele retorna true.
+
+3. Se algo estiver inválido, ele:
+Mostra automaticamente a mensagem de erro do navegador.
+Retorna false.
+
+
+💡 Diferença entre checkValidity() e reportValidity()
+
+Método	O que faz:
+checkValidity(): 	Só verifica e retorna true ou false, sem mostrar mensagens de erro.
+reportValidity(): 	Verifica e também mostra as mensagens de erro (quando inválido).
+
+
+
+👨‍💻 Exemplo simples
+
+<form id="meuFormulario">
+  <input type="email" required placeholder="Digite seu email">
+  <button type="button" onclick="verificar()">Enviar</button>
+</form>
+
+<script>
+  function verificar() {
+    const form = document.getElementById("meuFormulario");
+    if (form.reportValidity()) {
+      alert("Tudo certo! Pode enviar.");
+      // Aqui você pode prosseguir com o envio, como form.submit()
+    } else {
+      // O navegador já mostrou os erros automaticamente
+      console.log("Tem erro no formulário.");
+    }
+  }
+</script>
+
+
+🧠 Em resumo
+
+reportValidity() é um jeito fácil e automático de validar e mostrar mensagens.
+
+Ele é útil quando você quer validar manualmente o formulário com 
+JavaScript, mas ainda aproveitar o sistema de mensagens do navegador.
+
+Ele não envia o formulário, só verifica e mostra os erros.
+
+
+-->
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400;0,700;1,200;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/button.css">
+    <link rel="stylesheet" href="css/records.css">
+    <link rel="stylesheet" href="css/modal.css">
+   
+    <title>CRUD</title>
+</head>
+<body>
+    <header>
+        <h1 class="header-title">Cadastro de Clientes</h1>
+    </header>
+
+    <!-- Inicio do conteudo principal -->
+    <main>
+        <button type="button" class="button blue mobile" id="cadastrarCliente">Cadastrar Cliente</button>
+
+        <!-- inicio da tabela -->
+        <table id="tableClient" class="records">
+              <!-- cabeça da tabela --> 
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Celular</th>
+                    <th>Cidade</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+              <!-- corpo da tabela --> 
+            <tbody>
+              <!-- <tr>
+                    <td>Maria</td>
+                    <td>maria@gmail.com</td>
+                    <td>(11) 97165-1111</td>
+                    <td>Anapolis</td>
+                    <td>
+                        <button type="button" class="button green">editar</button>
+                        <button type="button" class="button red">excluir</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>João Pedro</td>
+                    <td>joao@gmail.com</td>
+                    <td>(11) 97165-2222</td>
+                    <td>Jandira</td>
+                    <td>
+                        <button type="button" class="button green">editar</button>
+                        <button type="button" class="button red">excluir</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Jose da Silva</td>
+                    <td>jose@gmail.com</td>
+                    <td>(11) 97165-3333</td>
+                    <td>São Roque</td>
+                    <td>
+                        <button type="button" class="button green">editar</button>
+                        <button type="button" class="button red">excluir</button>
+                    </td>
+                </tr>  --> 
+            </tbody>
+                 <!-- fim do corpo da tabela --> 
+        </table>
+          <!-- fim da tabela --> 
+
+
+            <!-- div principal de novos cadastros --> 
+        <div class="modal" id="modal">
+            <div class="modal-content">
+                <header class="modal-header">
+                    <h2>Novo Cliente</h2>
+                    <span class="modal-close" id="modalClose">&#10006;</span>
+                </header>
+                <form id="form" class="modal-form">
+                    <input type="text" id="nome" data-index="'new" class="modal-field" placeholder="Nome do Cliente" required>
+                    <input type="email" id="email" class="modal-field" placeholder="e-mail do Cliente" required>
+                    <input type="text" id="celular" class="modal-field" placeholder="Celular do Cliente" required>
+                    <input type="text" id="cidade" class="modal-field" placeholder="Cidade do Cliente" required>
+                </form>
+                <footer class="modal-footer">
+                    <button id="salvar" class="button green">Salvar</button>
+                    <button id="cancelar" class="button blue">Cancelar</button>
+                </footer>
+            </div>
+        </div>
+        
+    </main>
+    <footer>
+        Copyright &copy; Prof. Fernando Leonid
+    </footer>
+
+
+    <script>
+
+
+/*CRUD é a sigla para Create (criar), Read (ler), Update (atualizar)
+e Delete (excluir), e representa as quatro operações básicas que podem 
+ser realizadas em dados armazenados em um banco de dados ou sistema de armazenamento. 
+
+Detalhes:
+Create (Criar): Permite adicionar novos registros ou dados ao sistema.
+Read (Ler): Permite consultar ou recuperar dados existentes no sistema.
+Update (Atualizar): Permite modificar ou alterar dados já existentes.
+Delete (Excluir): Permite remover dados do sistema. 
+ */
+
+
+
+
+        'use strict'
+
+    const openModal = () => document.getElementById('modal')
+    .classList.add('active')
+
+    const closeModal = () => {
+        clearFields()
+        document.getElementById('modal').classList.remove('active')
+    }
+
+
+    
+
+    
+    //nessa const eu fiz com que lesse os dados do local storane pegando a chave db_client que é o banco de dados
+    // e como ja sei, o localStorange ler so objeto, então eu preciso converter novamente pra objeto oque eu ja tinha comvertudo pra string no localstrong de enviar dados
+    const getLocalStorange = () => JSON.parse(localStorage.getItem('dbClient')) ?? []
+    // se não existir nada no banco de dados, retorna array vazio
+
+
+     // o setItem vai enviar os dados e dentro de () eu preciso passar uma chave, o valor da chave.
+    const setLocalStorange = (dbClient) =>  localStorage.setItem("dbClient", JSON.stringify(dbClient))
+    // criei uma chave onde vai ser o banco de dados do cliente e que essa chave vai receber db_client onde tem todos os dados do cliente
+
+
+
+    //CRUD [Delete] função de deletar
+    const deleteClient = (index) => {
+        //primeiro vai ler o banco
+        // Primeiro, vai ler o "banco de dados" (salvo no localStorage)
+        const dbClient = readClient()
+
+        // Agora, vamos excluir 1 item do array na posição informada pelo parâmetro "index"
+        // O método splice() altera o array original:
+        // - Primeiro parâmetro: o índice onde a alteração vai começar
+        // - Segundo parâmetro: quantos itens serão removidos a partir desse índice
+        dbClient.splice(index, 1)
+
+          // Depois de remover o item, salva o novo estado do banco de dados no localStorage
+          setLocalStorange(dbClient)
+    }
+    
+
+// CRUD [Update] - Função para atualizar um cliente no banco de dados
+const updateClient = (index, client) => {
+
+    // Lê todos os clientes do banco de dados (localStorage)
+    // A função readClient() retorna o array de clientes salvo
+    const db_client = readClient()
+
+    // Aqui usamos colchetes [] para acessar a posição do cliente no array
+    // Exemplo: se index for 1, acessamos db_client[1]
+    // Substituímos esse cliente pelo novo objeto "client" que recebemos com os dados atualizados
+    db_client[index] = client
+
+    // Agora que o array foi alterado, salvamos ele novamente no localStorage
+    // A função setLocalStorange() converte o array em string JSON e armazena no navegador
+    setLocalStorange(db_client)
+}
+
+
+    //CRUD [READ] função de ler
+    const readClient = () => getLocalStorange()
+    // no read para ler, criei apenas uma função e coloquei a função getLocalStorange() que já lia o banco de dados
+
+
+    //CRUD [CREATE] função de criar
+    const createClient = (cliente) => {
+       // o parametro cliente é os clientes que vão chegar e nesse caso ele esta vindo do objeto tempoClient, e sempre quando vim um objeto novo sera cadastrado no nosso banco de dados do localStorange
+
+        // dbClient vai receber getLocalStorange que está lendo os dados do nosso banco de dados
+        const dbClient = getLocalStorange()
+
+        //e em seguida usei o push pra adicionar um novo cliente sempre que for criado   //e em seguida usei o push pra adicionar um novo cliente sempre que for criado
+        dbClient.push (cliente)
+
+        // salei o novo cliente mo bando de dados
+        setLocalStorange(dbClient)
+        
+      
+    }
+
+
+    const isValidFields = () => {
+     return document.getElementById('form').reportValidity()
+    }
+    
+
+    const clearFields = () => {
+        const fields = document.querySelectorAll('.modal-field')
+        fields.forEach(field => field.value = "")
+        document.getElementById('nome').dataset.index = 'new'
+    }
+
+    // interação com o layout
+   // interação com o layout
+const salvarClient = () => {
+    if (isValidFields()) {
+        const cliente = {
+            nome: document.getElementById('nome').value, // estou pegando o valor digitado do nome e atribuindo à propriedade do objeto nome
+            email: document.getElementById('email').value, // pegando o valor do email
+            celular: document.getElementById('celular').value, // pegando o celular digitado
+            cidade: document.getElementById('cidade').value // pegando a cidade digitada
+        }
+
+        // Aqui pegamos o valor de "data-index" do input do nome. 
+        // Esse valor indica se estamos criando um novo cliente ('new')
+        // ou editando um existente (índice numérico).
+        const index = document.getElementById('nome').dataset.index
+
+        // 🧨 ERRO QUE ESTAVA ACONTECENDO ANTES:
+        // O valor de dataset.index estava vazio, porque esquecíamos de definir
+        // ele como 'new' ao abrir o modal para novo cliente.
+        // Isso fazia com que o sistema pensasse que era uma edição, mas sem índice válido.
+
+        // ✅ SOLUÇÃO:
+        // Agora, ao abrir o modal de novo cliente, colocamos:
+        // document.getElementById('nome').dataset.index = 'new'
+        // Assim, conseguimos fazer essa verificação corretamente abaixo:
+
+        if (index == 'new') {
+            createClient(cliente)
+            updateTable()
+            closeModal()
+            alert(`Seja bem-vindo, ${cliente.nome}!`)
+        } else {
+            updateClient(index, cliente)
+            updateTable()
+            closeModal()
+        }
+
+        alert('Cadastrando cliente...')
+    }
+}
+
+    const createRow = (client, index) => {
+       // newRow vai aidicionar uma nova linha de cliente na memoria
+      const newRow = document.createElement('tr')
+       // prenche tr de inicial que estava vazio com os td, e esses td serão o valor digitado pelo o usuario em cada campo 
+       newRow.innerHTML = `
+        <td>${client.nome}</td>
+        <td>${client.email}</td>
+        <td>${client.celular}</td>
+        <td>${client.cidade}</td>
+        <td>
+        <button type="button" class="button green" id="editar-${index}">Editar</button>
+        <button type="button" class="button red" id="excluir-${index}">Excluir</button>
+        </td>
+       `// nos botão eu criei ids,"editar e excluir" pra eu conseguir mexer dinamicamente no js e identificar qual botão vai ser clicado. 
+
+
+
+       // agora eu estou adicionando no html os novos cliente criados. estou pegando o id da tabela, especificando que dentro desse id tem um tbody e adidionando um filho que sera newRow, onde newRow vai adicionar uma nova linha de clientes novos
+       document.querySelector('#tableClient>tbody').appendChild(newRow)
+    }
+
+    
+    const clearTable = () => {
+    // aqui atraves do querySelectorAll eu passei todo o caminho pra pegar as tr  
+    const rows = document.querySelectorAll('#tableClient>tbody tr')
+    // e depois com forEach eu pecorrer cada array de elemento e e eu passo pra pegar cada uma das linhas ("row") e depois esclui ('row.remove')
+    rows.forEach(row => row.remove())
+}
+
+   
+   const updateTable = () => {
+    const dbClient = readClient()
+    clearTable()
+    dbClient.forEach(createRow)
+}
+
+
+const fillfields = (client) => {
+    document.getElementById('nome').value = client.nome
+    document.getElementById('email').value = client.email
+    document.getElementById('celular').value = client.celular
+    document.getElementById('cidade').value = client.cidade
+    document.getElementById('nome').dataset.index = client.index
+}
+
+const editClient = (index) => {
+    // se eu usasse apenas o readClient() e lesse o cliente, iria me retornar todo o array e eu quero apenas oque foi clicado por isso usei [index] pra pegar apenas o indice
+    const client = readClient()[index]
+    // o cliente na arrow fillfields não tinha o index, apenas tinha os dados que vimnha do index em (client.index) então eu criei ele ter passando client.index e atribuindo index
+    client.index = index // agora quando for mandando pro fillfields ele ja vai ter o index
+    fillfields(client)
+    openModal()
+}
+
+const editeDelete = (evento) => {
+    // Se o tipo do elemento clicado for um botão, executa o bloco abaixo
+    if (evento.target.type == 'button') {
+
+        // Nessa const, eu estou separando o id do botão clicado em duas partes usando split('-')
+        // Por exemplo, se o id for "editar-2", ele será separado em ['editar', '2']
+        // "action" vai receber a palavra (editar ou excluir), e "index" vai receber o número (posição no array)
+        const [action, index] = evento.target.id.split('-')
+
+        // Se a ação for "editar", chamo a função editClient passando o index
+        // Isso vai preencher os campos do modal com os dados do cliente e abrir o modal para edição
+        if (action == 'editar') {
+            editClient(index)
+
+        } else {
+            // Se a ação for "excluir", primeiro leio o cliente com base no índice
+            const client = readClient()[index]
+
+            // Em seguida, exibo uma caixa de confirmação perguntando se realmente deseja excluir o cliente
+            const response = confirm(`Deseja realmente excluir o cliente ${client.nome}?`)
+
+            // Se a resposta for positiva (clicar em OK), chama a função de deletar e atualiza a tabela
+            if (response) {
+                deleteClient(index)
+                updateTable()
+            }
+        }
+    }
+}
+    updateTable()
+
+    document.getElementById('cadastrarCliente')
+    .addEventListener('click', openModal)
+
+    document.getElementById('modalClose')
+    .addEventListener('click', closeModal)
+
+    document.getElementById('salvar')
+    .addEventListener('click', salvarClient)
+
+    document.querySelector('#tableClient>tbody')
+    .addEventListener('click', editeDelete)
+    </script>
+</body>
+</html>
